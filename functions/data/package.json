@@ -1,0 +1,20 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "main": "test.js",
+  "scripts": {},
+  "author": "",
+  "keywords": [],
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/firestore": "^6.5.0",
+    "express": "^4.17.1",
+    "express-openid-connect": "^2.4.0",
+    "express-session": "^1.17.2",
+    "is-date-object": "^1.0.2",
+    "jquery-csv": "^1.0.21",
+    "openai": "^3.2.1",
+    "serverless-http": "^2.3.1"
+  }
+}
