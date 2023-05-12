@@ -49,12 +49,11 @@ router.get("/", (req, res) => {
 
 router.post("/send_openai_request", async function (req, res) {
   var INPUT = JSON.parse(req.body);
-  console.log(INPUT);
-  // do prompt input here, like combining title and description etc.
-  var prompt = INPUT.description;
+  var prompt = INPUT.title + INPUT.description + '\n\n####\n\n';
   const response = await openai.createCompletion({
-    model: "ada",
+    model: "curie:ft-marketing-customer-insight-university-of-hamburg-2023-04-16-10-26-28",
     prompt: prompt,
+    max_tokens: 50
   });
   const answer = response.data.choices[0].text;
   return res.status(200).json({
