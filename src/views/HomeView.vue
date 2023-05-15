@@ -196,6 +196,7 @@
       this.session_id = this.geturlparameter("SESSION_ID");
 
       backend_functions.get_scenario().then(response => {
+        console.log(response);
         this.scenario_id = response.data.scenario_id;
     })
     }
