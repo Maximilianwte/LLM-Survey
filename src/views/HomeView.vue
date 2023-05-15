@@ -173,7 +173,7 @@
           "&time_forum=" +
           this.time_forum_seconds +
           "&forum_state=" +
-          !this.happy_result +
+          !this.happy_result2 +
           "&length_q_title=" +
           this.input.title.length +
           "&length_q_desc=" +
