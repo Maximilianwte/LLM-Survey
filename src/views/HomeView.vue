@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full relative flex-col">
+  <div class="w-full mb-12 relative flex-col">
     <footer class="absolute top-4 right-4">
     <img class="h-16" src="../assets/uhh.png" />
   </footer>
     <div class="flex-col relative px-6 w-full md:w-auto items-start text-xl mt-32">
-      <div id="surveyQuestion" v-if="happy_result == null && happy_result2 == null" class="w-full">
+      <div id="surveyQuestion" v-if="happy_result != true && happy_result2 == null" class="w-full">
         <div v-if="started_survey == false" class="w-full md:w-156 text-justify">
           <h2 class="text-3xl">The service survey</h2>
           <p class="mt-4">Imagine being a customer of the Garmin company. You own one of the Garmin fitness trackers and need support on an problem you are facing with your product.<br>After clicking on the 'start' button, we will show you a scenario with a fictional problem. Please use the Chatbot to get a solution for your fictional problem. If you feel the need to get more info or are not satisfied with the answer, you can also access the forum on the next page and browse it for an answer.<br><br>An example on how to structure the input is given in the textboxes.<br><br>The survey should take 7-9 minutes to complete. Thank you and have fun!</p>
@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div id="resultGPT" v-if="answer.received && happy_result2 == null" class="w-full">
+      <div id="resultGPT" v-if="answer.received && happy_result2 == null && happy_result != true" class="w-full">
         <h2 class="mt-12">Generated answer</h2>
         <p class="mt-2 text-base text-gray-400 w-full md:w-156">If you are unhappy with the generated answer, feel free to update your question title and description above to generate a new answer.</p>
         <div id="response"
@@ -49,8 +49,8 @@
       </div>
 
       <div v-if="happy_result || happy_result2" id="linkQualtrics" class="w-full flex-col md:w-128">
-        <h3>Please now open the survey. It's fine to close this tab after
-            you clicked on the survey link.</h3>
+        <h3>Thank you for your response. Please now open the survey. It's fine to close this tab after
+            you clicked on 'Open Survey' below.</h3>
         <a class="text-red-500 mt-4" :href="getQualtricsHREF()">Open Survey</a>
       </div>
 
@@ -58,9 +58,9 @@
 
       <div v-if="happy_result2 == false" class="container flex-col w-full">
         <div  class="w-full md:w-1/2 text-justify flex-col" id="linkForum">
-        <h3 class="mb-2">Sorry, that the Chatbot was not able to return a good answer. Now take 2-3 minutes to try to look for an answer to your question in the Garmin Customer Forum. Afterwards you can fill out the survey for your experience.</h3>
+        <h3 class="mb-2">Sorry, that the Chatbot was not able to return a good answer. Now take 2-3 minutes to try to look for an answer to your question in the Garmin Customer Forum. Afterwards you can fill out the survey for your experience. <font class=text-red-400>The survey link will appear after you visited</font> the Forum.</h3>
         <a href="https://forums.garmin.com/sports-fitness/healthandwellness/" class="text-red-500 mt-4" target="_blank" @click="openedForum = true">Open Garmin Forum</a>
-        <div class="mt-4" v-if="time_forum_seconds > 30" id="leaveToQualtrics">
+        <div class="mt-4 flex-col" v-if="time_forum_seconds > 30" id="leaveToQualtrics">
           <h3>If you finished surfing the Garmin Forum, you can now go to the survey. It's fine to close this tab after
             you clicked on the survey link.</h3>
           <a class="text-red-500 mt-4" :href="getQualtricsHREF()">Open Survey</a>
@@ -196,7 +196,6 @@
       this.session_id = this.geturlparameter("SESSION_ID");
 
       backend_functions.get_scenario().then(response => {
-        console.log(response);
         this.scenario_id = response.data.scenario_id;
     })
     }

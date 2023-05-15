@@ -69,7 +69,7 @@ router.post("/send_openai_request", async function (req, res) {
 router.get("/get_open_scenario", async function (req, res) {
   try {
     const collectionRef = firestore.collection('scenarios');
-    const querySnapshot = await collectionRef.where('completed', '<', 50).get();
+    const querySnapshot = await collectionRef.where('completed', '<', 37).get();
 
     const documents = [];
     querySnapshot.forEach((documentSnapshot) => {
