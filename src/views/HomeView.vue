@@ -1,23 +1,26 @@
 <template>
-  <div class="w-full flex-col mb-32">
-    <div class="flex-col px-6 w-full md:w-auto items-start text-xl mt-16">
-      <div id="surveyQuestion" v-if="happy_result == null" class="w-full">
-        <div v-if="started_survey == false" class="">
-          <h2 class="text-3xl">Survey Title</h2>
-          <p class="mt-4">Task description here. Maybe add steps of what they do?</p>
+  <div class="w-full relative flex-col">
+    <footer class="absolute top-4 right-4">
+    <img class="h-16" src="../assets/uhh.png" />
+  </footer>
+    <div class="flex-col relative px-6 w-full md:w-auto items-start text-xl mt-32">
+      <div id="surveyQuestion" v-if="happy_result == null && happy_result2 == null" class="w-full">
+        <div v-if="started_survey == false" class="w-full md:w-156 text-justify">
+          <h2 class="text-3xl">The service survey</h2>
+          <p class="mt-4">Imagine being a customer of the Garmin company. You own one of the Garmin fitness trackers and need support on an problem you are facing with your product.<br>After clicking on the 'start' button, we will show you a scenario with a fictional problem. Please use the Chatbot to get a solution for your fictional problem. If you feel the need to get more info or are not satisfied with the answer, you can also access the forum on the next page and browse it for an answer.<br><br>An example on how to structure the input is given in the textboxes.<br><br>The survey should take 7-9 minutes to complete. Thank you and have fun!</p>
           <button @click="start_survey"
               class="mt-4 bg-red-500 hover:bg-red-400 text-white shadow-md px-8 py-2 text-xl rounded-full">Start</button>
         </div>
-        <div v-if="started_survey && scenario_id != null" id="contentBox">
-          <h2 class="text-3xl">Survey Title</h2>
+        <div v-if="started_survey && scenario_id != null" class="w-full md:w-156" id="contentBox">
+          <h2 class="text-3xl">The service survey: {{scenario[scenario_id].title}}</h2>
           <p class="mt-4">{{scenario[scenario_id].text}}</p>
           <div id="input" class="mt-8 flex-col w-full">
             <!-- <label class="w-full md:w-156 ml-2">Question Title:</label> -->
             <input maxlength="90" class="h-10 w-full md:w-156 py-2 px-2 text-lg bg-bg shadow-md rounded-md" type="text"
-              name="title" placeholder="Enter your question title here" v-model="input.title">
+              name="title" placeholder="Enter your question title here: E.g. Brightness setting fails" v-model="input.title">
             <!-- <label class="w-full md:w-156 ml-2 mt-4">Question Description:</label> -->
             <textarea maxlength="300" class="mt-4 h-40 py-2 px-2 text-lg w-full md:w-156 rounded-md bg-bg shadow-md"
-              type="text" placeholder="Enter your question description here" name="description"
+              type="text" placeholder="Enter your question description here: E.g. I have a Garmin Vivosport 4 and have the brightness set to 100%..." name="description"
               v-model="input.description"></textarea>
             <p v-if="information.length > 0" class="text-xl mt-4 text-red-500">{{information}}</p>
             <button @click="send_response"
@@ -26,7 +29,7 @@
         </div>
       </div>
 
-      <div id="resultGPT" v-if="answer.received && happy_result == null" class="w-full">
+      <div id="resultGPT" v-if="answer.received && happy_result2 == null" class="w-full">
         <h2 class="mt-12">Generated answer</h2>
         <p class="mt-2 text-base text-gray-400 w-full md:w-156">If you are unhappy with the generated answer, feel free to update your question title and description above to generate a new answer.</p>
         <div id="response"
@@ -45,18 +48,22 @@
         </div>
       </div>
 
-      <div v-if="happy_result" id="linkQualtrics">
-        <h3>Description Link to Qualtrics</h3>
-        <a :href="getQualtricsHREF()">Open Survey</a>
+      <div v-if="happy_result || happy_result2" id="linkQualtrics" class="w-full flex-col md:w-128">
+        <h3>Please now open the survey. It's fine to close this tab after
+            you clicked on the survey link.</h3>
+        <a class="text-red-500 mt-4" :href="getQualtricsHREF()">Open Survey</a>
       </div>
-      <div v-if="happy_result == false" class="container flex-col">
+
+      <p v-if="happy_result == false && happy_result2 == null" class="text-xl mt-4 text-red-500">Please try to update your question title and description above to try one more time.</p>
+
+      <div v-if="happy_result2 == false" class="container flex-col w-full">
         <div  class="w-full md:w-1/2 text-justify flex-col" id="linkForum">
         <h3 class="mb-2">Sorry, that the Chatbot was not able to return a good answer. Now take 2-3 minutes to try to look for an answer to your question in the Garmin Customer Forum. Afterwards you can fill out the survey for your experience.</h3>
         <a href="https://forums.garmin.com/sports-fitness/healthandwellness/" class="text-red-500 mt-4" target="_blank" @click="openedForum = true">Open Garmin Forum</a>
         <div class="mt-4" v-if="time_forum_seconds > 30" id="leaveToQualtrics">
           <h3>If you finished surfing the Garmin Forum, you can now go to the survey. It's fine to close this tab after
             you clicked on the survey link.</h3>
-          <a class="mt-2" :href="getQualtricsHREF()">Open Survey</a>
+          <a class="text-red-500 mt-4" :href="getQualtricsHREF()">Open Survey</a>
         </div>
       </div>
       </div>
@@ -71,18 +78,18 @@
       return {
         scenario: [{
             id: 0,
-            title: "Get Wifi",
-            text: "This is a scenario text."
+            title: "GPS wait time",
+            text: "You own an garmin watch from the 'vivo'-series. When starting your training, the locating of your position via GPS takes very long and sometimes stop. You want to know if there are any solutions for that problem."
           },
           {
             id: 1,
-            title: "Get Music",
-            text: "This is a scenario text."
+            title: "Heartrate monitor",
+            text: "You own a vivoactive 4 watch (AV4) from Garmin. To boost your training and monitor your heart rate (HR), you want to use a third party chest strap you already own. You now try to find out if any third party straps are compatible with your watch."
           },
           {
             id: 2,
-            title: "Get Battery",
-            text: "This is a scenario text."
+            title: "Track swimming",
+            text: "You are thinking of buying a vivosmart 4 watch and really enjoy swimming. So you try to see if it is possible to track your swimming activity on this watch or if there is a better alternative."
           }
         ],
         input: {
@@ -94,7 +101,7 @@
           text: ""
         },
         information: "",
-        scenario_id: 0,
+        scenario_id: null,
         prolific_id: null,
         study_id: null,
         session_id: null,
@@ -102,6 +109,7 @@
         time_forum_seconds: 0,
         started_survey: false,
         happy_result: null,
+        happy_result2: null,
         openedForum: false
       }
     },
@@ -133,8 +141,13 @@
         this.started_survey = true;
       },
       set_happy(state) {
-        this.happy_result = state;
-        if (state == false) {
+        if (this.happy_result == null) {
+          this.happy_result = state;
+        }
+        else {
+          this.happy_result2 = state;
+        }
+        if (this.happy_result2 == false) {
           this.increase_time_forum_seconds();
         }
       },
@@ -166,7 +179,9 @@
           "&length_q_desc=" +
           this.input.description.length +
           "&length_answer=" +
-          this.answer.text.length
+          this.answer.text.length +
+          "&scenario_id=" +
+          this.scenario_id
         );
       } else {
         return "https://unihamburgbs.eu.qualtrics.com/jfe/form/SV_3PLh5vny89sDejc/";
@@ -180,9 +195,9 @@
       this.study_id = this.geturlparameter("STUDY_ID");
       this.session_id = this.geturlparameter("SESSION_ID");
 
-      /* backend_functions.get_scenario().then(response => {
-        this.scenario_id = response.scenario_id;
-    }) */
+      backend_functions.get_scenario().then(response => {
+        this.scenario_id = response.data.scenario_id;
+    })
     }
   }
 </script>

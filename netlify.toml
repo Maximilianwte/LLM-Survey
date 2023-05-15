@@ -4,12 +4,6 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/api/get_ip"
-  to = "https://api.ipify.org/?format=json"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

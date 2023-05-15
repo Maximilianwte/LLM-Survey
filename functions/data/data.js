@@ -17,7 +17,10 @@ const openai = new OpenAIApi(configuration);
 
 // Firestore
 
-const { Firestore, FieldValue } = require('@google-cloud/firestore');
+const {
+  Firestore,
+  FieldValue
+} = require('@google-cloud/firestore');
 
 const serviceAccount = {
   "type": "service_account",
@@ -49,16 +52,17 @@ router.get("/", (req, res) => {
 
 router.post("/send_openai_request", async function (req, res) {
   var INPUT = JSON.parse(req.body);
-  var prompt = INPUT.title + INPUT.description + '\n\n####\n\n';
+  var prompt = 'Question: ' + INPUT.title + ', Description: ' + INPUT.description + '\n\n####\n\n';
   const response = await openai.createCompletion({
     model: "curie:ft-marketing-customer-insight-university-of-hamburg-2023-04-16-10-26-28",
     prompt: prompt,
     max_tokens: 50
   });
-  const answer = response.data.choices[0].text;
+  let answer = response.data.choices[0].text;
+  const lastDotIndex = answer.lastIndexOf(".") != -1 ? answer.lastIndexOf(".") + 1 : answer.length;
   return res.status(200).json({
     success: true,
-    text: answer,
+    text: answer.substring(0, lastDotIndex),
   });
 });
 
@@ -74,17 +78,13 @@ router.get("/get_open_scenario", async function (req, res) {
         id: documentSnapshot.id,
         data
       });
-    });
-
-    //const filteredDocuments = documents.filter((document) => document.data.completedCount < 50);
-    const id = Math.floor(Math.random() * documents.length + 1);
-    res.sendStatus(200).json({
+    })
+    const id = await Math.floor(Math.random() * documents.length);
+    res.send({
       scenario_id: id
     });
   } catch (error) {
-    res.sendStatus(500).json({
-      error: error
-    });
+    console.log(error);
   }
 })
 
