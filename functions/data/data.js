@@ -79,11 +79,12 @@ router.get("/get_open_scenario", async function (req, res) {
         data
       });
     })
+    let id;
     if (await documents.length == 0) {
-      let id = Math.floor(Math.random() * 3);
+      id = Math.floor(Math.random() * 3);
     }
     else {
-      let id = Math.floor(Math.random() * documents.length);
+      id = Math.floor(Math.random() * documents.length);
     }
     
     res.send({
