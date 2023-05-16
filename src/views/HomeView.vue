@@ -195,7 +195,7 @@
             "&time_forum=" +
             this.time_forum_seconds +
             "&forum_state=" +
-            !this.happy_result2 +
+            (!this.happy_result2).toString() +
             "&length_q_title=" +
             this.input.title.length +
             "&length_q_desc=" +
