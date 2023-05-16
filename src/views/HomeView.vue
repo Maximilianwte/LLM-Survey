@@ -185,11 +185,11 @@
         if (this.prolific_id != null) {
           return (
             "https://unihamburgbs.eu.qualtrics.com/jfe/form/SV_3PLh5vny89sDejc?p_id=" +
-            this.study_id +
+            (this.study_id).toString() +
             "&s_id=" +
-            this.session_id +
+            (this.session_id).toString() +
             "&u_id=" +
-            this.prolific_id +
+            (this.prolific_id).toString() +
             "&time_total=" +
             this.time_total_seconds +
             "&time_forum=" +
