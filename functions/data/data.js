@@ -56,7 +56,7 @@ router.post("/send_openai_request", async function (req, res) {
   const response = await openai.createCompletion({
     model: "curie:ft-marketing-customer-insight-university-of-hamburg-2023-04-16-10-26-28",
     prompt: prompt,
-    max_tokens: 50
+    max_tokens: 80
   });
   let answer = response.data.choices[0].text;
   const lastDotIndex = answer.lastIndexOf(".") != -1 ? answer.lastIndexOf(".") + 1 : answer.length;
@@ -79,7 +79,13 @@ router.get("/get_open_scenario", async function (req, res) {
         data
       });
     })
-    const id = await Math.floor(Math.random() * documents.length);
+    if (await documents.length == 0) {
+      let id = Math.floor(Math.random() * 3);
+    }
+    else {
+      let id = Math.floor(Math.random() * documents.length);
+    }
+    
     res.send({
       scenario_id: id
     });
