@@ -16,6 +16,11 @@ let logic_functions = {
     return await axios.post(URL_PREFIX + "/data/send_answer", data).then(response => {
       return response
     })
+  },
+  async set_counter(data) {
+    return await axios.post(URL_PREFIX + "/data/set_counter", data).then(response => {
+      return response
+    })
   }
 }
 

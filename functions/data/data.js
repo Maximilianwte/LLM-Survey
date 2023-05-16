@@ -69,7 +69,7 @@ router.post("/send_openai_request", async function (req, res) {
 router.get("/get_open_scenario", async function (req, res) {
   try {
     const collectionRef = firestore.collection('scenarios');
-    const querySnapshot = await collectionRef.where('completed', '<', 37).get();
+    const querySnapshot = await collectionRef.where('completed', '<', process.env.VUE_APP_MAX_REQUESTS_SCENARIO).get();
 
     const documents = [];
     querySnapshot.forEach((documentSnapshot) => {
@@ -102,8 +102,16 @@ router.post("/send_answer", async function (req, res) {
       question_description: INPUT.question_description,
       openai_answer: INPUT.openai_answer
     });
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+  }
+})
 
-    const collectionScenariosRef = firestore.collection('scenarios');
+router.post('/set_counter', async (req, res) => {
+  var INPUT = JSON.parse(req.body);
+
+  const collectionScenariosRef = firestore.collection('scenarios');
     const querySnapshot = await collectionScenariosRef.where('id', '==', INPUT.scenario_id).get();
 
     querySnapshot.forEach(async (documentSnapshot) => {
@@ -112,11 +120,9 @@ router.post("/send_answer", async function (req, res) {
         'completed': FieldValue.increment(1)
       });
     });
+    console.log('set counter' + INPUT.scenario_id)
     res.sendStatus(200);
-  } catch (error) {
-    console.log(error);
-  }
-})
+});
 
 app.use("/.netlify/functions/data", router);
 
